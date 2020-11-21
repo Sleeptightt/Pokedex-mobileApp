@@ -1,8 +1,6 @@
 
 package modelAPI;
 
-import com.example.Gold;
-import com.example.Silver;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

@@ -1,5 +1,6 @@
 package view;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,11 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonView> {
 
     public PokemonAdapter(){
         this.pokemons = new ArrayList<>();
-
     }
 
-    public void addPokemon(Pokemon pokemon){
-        pokemons.add(pokemon);
+    public void addPokemons(ArrayList<Pokemon> pokemons){
+        this.pokemons.addAll(pokemons);
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -50,4 +51,13 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonView> {
     }
 
 
+    public void clear() {
+        this.pokemons.clear();
+        this.notifyDataSetChanged();
+    }
+
+    public void addPokemon(Pokemon pokemon) {
+        pokemons.add(pokemon);
+        this.notifyDataSetChanged();
+    }
 }

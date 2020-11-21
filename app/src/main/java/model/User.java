@@ -1,17 +1,20 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import androidx.annotation.NonNull;
 
 public class User implements Serializable {
     private String id;
     private String username;
+    private List<String> myPokemons;
 
     public User() {
     }
 
     public User(String id, String username) {
+        this.myPokemons = new ArrayList<>();
         this.id = id;
         this.username = username;
     }
@@ -32,8 +35,11 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    @Override
-    public String toString() {
-        return this.username;
+    public List<String> getMyPokemons() {
+        return myPokemons;
+    }
+
+    public void setMyPokemons(List<String> myPokemons) {
+        this.myPokemons = myPokemons;
     }
 }

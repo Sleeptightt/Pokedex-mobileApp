@@ -4,8 +4,6 @@ package modelAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.Move_;
-import com.example.VersionGroupDetail;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

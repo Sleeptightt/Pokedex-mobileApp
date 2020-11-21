@@ -4,10 +4,6 @@ package modelAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.Species;
-import com.example.Sprites;
-import com.example.Stat;
-import com.example.Type;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

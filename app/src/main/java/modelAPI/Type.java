@@ -1,7 +1,6 @@
 
 package modelAPI;
 
-import com.example.Type_;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

@@ -1,8 +1,6 @@
 
 package modelAPI;
 
-import com.example.Icons;
-import com.example.UltraSunUltraMoon;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

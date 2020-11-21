@@ -1,8 +1,6 @@
 
 package modelAPI;
 
-import com.example.RedBlue;
-import com.example.Yellow;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
