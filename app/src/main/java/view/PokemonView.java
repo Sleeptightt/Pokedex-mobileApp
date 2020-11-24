@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.reto2.R;
 import com.example.reto2.activities.PokemonDetailActivity;
 
+import model.User;
+
 public class PokemonView extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     private ConstraintLayout root;
     private ImageView pokemonSprite;
     private TextView pokemonName;
+    private String user;
 
     public PokemonView(ConstraintLayout root) {
         super(root);
@@ -44,8 +47,13 @@ public class PokemonView extends RecyclerView.ViewHolder implements View.OnClick
             case R.id.root:
                 Intent i = new Intent(root.getContext(), PokemonDetailActivity.class);
                 i.putExtra("pokemon", pokemonName.getText().toString());
+                i.putExtra("userId", this.user);
                 root.getContext().startActivity(i);
                 break;
         }
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

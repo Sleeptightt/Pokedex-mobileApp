@@ -1,7 +1,9 @@
 package com.example.reto2.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,10 +19,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import model.Pokemon;
+import model.User;
 
 public class PokemonDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Pokemon pokemon;
+    private String userId;
     private Button freeBtn;
     private ImageView pokemonThumbnailIV;
     private TextView pokemonNameTypeTV;
@@ -70,13 +74,46 @@ public class PokemonDetailActivity extends AppCompatActivity implements View.OnC
            }
         });
 
+        userId = getIntent().getExtras().getString("userId");
+
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.catchBtn:
+            case R.id.freeBtn:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(true);
+                builder.setTitle("Liberar Pokemon");
+                builder.setMessage("¿Estás seguro de que quieres liberar a este pokemon?");
+                builder.setPositiveButton("Confirmar",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Query q = db.collection("users").whereEqualTo("id", userId);
+                                q.get().addOnCompleteListener(task -> {
+                                    if(task.isSuccessful()){
+                                        User user = null;
+                                        for(QueryDocumentSnapshot document : task.getResult()){
+                                            user = document.toObject(User.class);
+                                            break;
+                                        }
+                                        user.getMyPokemons().remove(pokemon.getName());
+                                        db.collection("users").document(user.getId()).set(user);
+                                        finish();
+                                    }
+                                });
+                            }
+                        });
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //nada
+                    }
+                });
 
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 break;
         }
     }

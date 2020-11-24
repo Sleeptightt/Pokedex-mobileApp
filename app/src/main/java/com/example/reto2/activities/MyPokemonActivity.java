@@ -64,6 +64,7 @@ public class MyPokemonActivity extends AppCompatActivity implements View.OnClick
         layoutManager = new LinearLayoutManager(this);
         pokemonList.setLayoutManager(layoutManager);
         adapter = new PokemonAdapter();
+        adapter.setUser(myUser.getId());
         pokemonList.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
@@ -71,6 +72,12 @@ public class MyPokemonActivity extends AppCompatActivity implements View.OnClick
         catchBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
 
+        loadMyPokemons();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadMyPokemons();
     }
 

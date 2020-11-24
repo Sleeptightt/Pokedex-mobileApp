@@ -15,10 +15,12 @@ import com.example.reto2.R;
 import java.util.ArrayList;
 
 import model.Pokemon;
+import model.User;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonView> {
 
     private ArrayList<Pokemon> pokemons;
+    private String user;
 
     public PokemonAdapter(){
         this.pokemons = new ArrayList<>();
@@ -43,6 +45,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonView> {
     public void onBindViewHolder(@NonNull PokemonView holder, int position) {
         holder.getPokemonName().setText(pokemons.get(position).getName());
         Glide.with(holder.getRoot()).load(pokemons.get(position).getSprite()).into(holder.getPokemonSprite());
+        holder.setUser(this.user);
     }
 
     @Override
@@ -59,5 +62,9 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonView> {
     public void addPokemon(Pokemon pokemon) {
         pokemons.add(pokemon);
         this.notifyDataSetChanged();
+    }
+
+    public void setUser(String myUser) {
+        this.user = myUser;
     }
 }
