@@ -82,38 +82,42 @@ public class PokemonDetailActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.freeBtn:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setCancelable(true);
-                builder.setTitle("Liberar Pokemon");
-                builder.setMessage("¿Estás seguro de que quieres liberar a este pokemon?");
-                builder.setPositiveButton("Confirmar",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Query q = db.collection("users").whereEqualTo("id", userId);
-                                q.get().addOnCompleteListener(task -> {
-                                    if(task.isSuccessful()){
-                                        User user = null;
-                                        for(QueryDocumentSnapshot document : task.getResult()){
-                                            user = document.toObject(User.class);
-                                            break;
+                Query q = db.collection("users").whereEqualTo("id", userId);
+                q.get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        User user = null;
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            user = document.toObject(User.class);
+                            break;
+                        }
+                        if(user.getMyPokemons().contains(pokemon.getName())){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setCancelable(true);
+                            builder.setTitle("Liberar Pokemon");
+                            builder.setMessage("¿Estás seguro de que quieres liberar a"+ pokemon.getName() + "?");
+                            User finalUser = user;
+                            builder.setPositiveButton("Confirmar",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finalUser.getMyPokemons().remove(pokemon.getName());
+                                            db.collection("users").document(finalUser.getId()).set(finalUser);
+                                            finish();
                                         }
-                                        user.getMyPokemons().remove(pokemon.getName());
-                                        db.collection("users").document(user.getId()).set(user);
-                                        finish();
-                                    }
-                                });
-                            }
-                        });
-                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //nada
+                                    });
+                            builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //nada
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }else{
+                            Toast.makeText(this, "No puedes liberar un pokemon que no tienes :(", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
                 break;
         }
     }
