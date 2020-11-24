@@ -153,39 +153,18 @@ public class MyPokemonActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     Query query = db.collection("pokemon").whereEqualTo("name", pName);
                     query.get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().size() > 0) {
-                                for(QueryDocumentSnapshot document : task.getResult()){
-                                    Pokemon pokemon = document.toObject(Pokemon.class);
-                                    Intent i = new Intent(this, PokemonDetailActivity.class);
-                                    i.putExtra("pokemon", pokemon.getName());
-                                    i.putExtra("userId", myUser.getId());
-                                    this.startActivity(i);
-                                    break;
-                                }
-                            } else {
-                                getPokemonFromAPI(pName, false);
-                                Query q = db.collection("pokemon").whereEqualTo("name", pName);
-                                q.get().addOnCompleteListener(tsk -> {
-                                    if (tsk.isSuccessful()) {
-                                        if (tsk.getResult().size() > 0) {
-                                            for(QueryDocumentSnapshot document : tsk.getResult()){
-                                                Pokemon pokemon = document.toObject(Pokemon.class);
-                                                Intent i = new Intent(this, PokemonDetailActivity.class);
-                                                i.putExtra("pokemon", pokemon.getName());
-                                                i.putExtra("userId", myUser.getId());
-                                                this.startActivity(i);
-                                                break;
-                                            }
-                                        } else {
-                                            Toast.makeText(this, "No se encontró el pokemon especificado", Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else
-                                        Toast.makeText(this, "No se encontró el pokemon especificado", Toast.LENGTH_SHORT).show();
-                                });
+                        if (task.isSuccessful() && task.getResult().size() > 0) {
+                            for(QueryDocumentSnapshot document : task.getResult()) {
+                                Pokemon pokemon = document.toObject(Pokemon.class);
+                                Intent i = new Intent(this, PokemonDetailActivity.class);
+                                i.putExtra("pokemon", pokemon.getName());
+                                i.putExtra("userId", myUser.getId());
+                                this.startActivity(i);
+                                break;
                             }
-                        } else
-                            Toast.makeText(this, "No se encontró el pokemon especificado", Toast.LENGTH_SHORT).show();
+                        } else {
+                            getPokemonFromAPI(pName, false);
+                        }
                     });
                 }
                 break;
@@ -209,16 +188,26 @@ public class MyPokemonActivity extends AppCompatActivity implements View.OnClick
                             speed = pokemon.getStats().get(5).getBaseStat(),
                             hp = pokemon.getStats().get(0).getBaseStat();
                     Pokemon cPokemon = new Pokemon(name, types, sprite, def, attack, speed, hp);
-                    db.collection("pokemon").document(name).set(cPokemon);
-                    if(add){
-                        myUser.getMyPokemons().add(cPokemon.getName());
-                        db.collection("users").document(myUser.getId()).set(myUser);
-                        runOnUiThread(() -> adapter.addPokemon(cPokemon));
-                        runOnUiThread(() -> Toast.makeText(this, "¡Enhorabuena! Has atrapado a " + name, Toast.LENGTH_SHORT).show());
-                    }
+                    db.collection("pokemon").document(name).set(cPokemon).addOnCompleteListener(
+                            task -> {
+                                if(add){
+                                    myUser.getMyPokemons().add(cPokemon.getName());
+                                    db.collection("users").document(myUser.getId()).set(myUser);
+                                    runOnUiThread(() -> adapter.addPokemon(cPokemon));
+                                    runOnUiThread(() -> Toast.makeText(this, "¡Enhorabuena! Has atrapado a " + name, Toast.LENGTH_SHORT).show());
+                                }else{
+                                    Intent i = new Intent(this, PokemonDetailActivity.class);
+                                    i.putExtra("pokemon", cPokemon.getName());
+                                    i.putExtra("userId", myUser.getId());
+                                    this.startActivity(i);
+                                }
+                            }
+                    );
                 } else {
                     if(add)
                         runOnUiThread(() -> Toast.makeText(this, "El pokemon que quieres atrapar no existe", Toast.LENGTH_LONG).show());
+                    else
+                        runOnUiThread(() -> Toast.makeText(this, "No se encontró el pokemon especificado", Toast.LENGTH_SHORT).show());
                 }
             }).start();
         }else{
